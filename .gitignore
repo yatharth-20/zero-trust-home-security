@@ -1,0 +1,24 @@
+# Virtual Environment (Never commit or check for plagiarism)
+.venv/
+env/
+venv/
+ENV/
+
+# Python Bytecode & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Local evidence captures & test runs
+data/evidence/*.jpg
+data/evidence/*.mp4
+!data/evidence/.gitkeep
+*.db
+*.log
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

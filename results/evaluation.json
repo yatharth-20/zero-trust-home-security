@@ -1,0 +1,289 @@
+{
+  "n_scenarios": 400,
+  "seed": 11,
+  "n_threat": 181,
+  "n_benign": 219,
+  "systems": {
+    "A: face-recognition only": {
+      "tp": 62,
+      "fp": 58,
+      "tn": 161,
+      "fn": 119,
+      "precision": 0.5166666666666667,
+      "recall": 0.3425414364640884,
+      "f1": 0.4119601328903654,
+      "false_alarm_rate": 0.2648401826484018,
+      "accuracy": 0.5575,
+      "response_s": 0.0,
+      "latency_ms": 0.0006096785728004761
+    },
+    "B: context-aware fusion": {
+      "tp": 169,
+      "fp": 8,
+      "tn": 211,
+      "fn": 12,
+      "precision": 0.9548022598870056,
+      "recall": 0.9337016574585635,
+      "f1": 0.9441340782122905,
+      "false_alarm_rate": 0.0365296803652968,
+      "accuracy": 0.95,
+      "response_s": 2.544378698224852,
+      "latency_ms": 0.14069735715013718
+    }
+  },
+  "ablation": {
+    "B: full fusion": {
+      "tp": 169,
+      "fp": 8,
+      "tn": 211,
+      "fn": 12,
+      "precision": 0.9548022598870056,
+      "recall": 0.9337016574585635,
+      "f1": 0.9441340782122905,
+      "false_alarm_rate": 0.0365296803652968,
+      "accuracy": 0.95,
+      "response_s": 2.544378698224852,
+      "latency_ms": 0.14069735715013718
+    },
+    "B - sensors": {
+      "tp": 151,
+      "fp": 30,
+      "tn": 189,
+      "fn": 30,
+      "precision": 0.8342541436464088,
+      "recall": 0.8342541436464088,
+      "f1": 0.8342541436464088,
+      "false_alarm_rate": 0.136986301369863,
+      "accuracy": 0.85,
+      "response_s": 2.9403973509933774,
+      "latency_ms": 0.12173401786104218
+    },
+    "B - behaviour baseline": {
+      "tp": 169,
+      "fp": 3,
+      "tn": 216,
+      "fn": 12,
+      "precision": 0.9825581395348837,
+      "recall": 0.9337016574585635,
+      "f1": 0.9575070821529744,
+      "false_alarm_rate": 0.0136986301369863,
+      "accuracy": 0.9625,
+      "response_s": 2.544378698224852,
+      "latency_ms": 0.032488053567963755
+    },
+    "B - context (zone/schedule/child)": {
+      "tp": 135,
+      "fp": 36,
+      "tn": 183,
+      "fn": 46,
+      "precision": 0.7894736842105263,
+      "recall": 0.7458563535911602,
+      "f1": 0.7670454545454545,
+      "false_alarm_rate": 0.1643835616438356,
+      "accuracy": 0.795,
+      "response_s": 2.585185185185185,
+      "latency_ms": 0.11648407142826858
+    },
+    "B - liveness": {
+      "tp": 153,
+      "fp": 8,
+      "tn": 211,
+      "fn": 28,
+      "precision": 0.9503105590062112,
+      "recall": 0.8453038674033149,
+      "f1": 0.8947368421052632,
+      "false_alarm_rate": 0.0365296803652968,
+      "accuracy": 0.91,
+      "response_s": 2.6013071895424837,
+      "latency_ms": 0.13015544643329643
+    },
+    "B - tailgating logic": {
+      "tp": 160,
+      "fp": 8,
+      "tn": 211,
+      "fn": 21,
+      "precision": 0.9523809523809523,
+      "recall": 0.8839779005524862,
+      "f1": 0.9169054441260744,
+      "false_alarm_rate": 0.0365296803652968,
+      "accuracy": 0.9275,
+      "response_s": 2.39375,
+      "latency_ms": 0.15176087500484364
+    }
+  },
+  "per_scenario": [
+    {
+      "key": "owner_arrival",
+      "title": "Household member arrives",
+      "label": "benign",
+      "n": 22,
+      "A_alert_rate": 0.045454545454545456,
+      "B_alert_rate": 0.045454545454545456,
+      "B_mean_peak": 1.731113579399265
+    },
+    {
+      "key": "family_evening",
+      "title": "Family in the living room",
+      "label": "benign",
+      "n": 26,
+      "A_alert_rate": 0.0,
+      "B_alert_rate": 0.038461538461538464,
+      "B_mean_peak": 24.838562870240466
+    },
+    {
+      "key": "worker_scheduled",
+      "title": "Approved worker, normal hours",
+      "label": "benign",
+      "n": 12,
+      "A_alert_rate": 0.0,
+      "B_alert_rate": 0.0,
+      "B_mean_peak": 1.7102820098945244
+    },
+    {
+      "key": "delivery_visitor",
+      "title": "Delivery at the door",
+      "label": "benign",
+      "n": 28,
+      "A_alert_rate": 1.0,
+      "B_alert_rate": 0.07142857142857142,
+      "B_mean_peak": 27.43076431240925
+    },
+    {
+      "key": "late_resident",
+      "title": "Resident home late",
+      "label": "benign",
+      "n": 28,
+      "A_alert_rate": 0.07142857142857142,
+      "B_alert_rate": 0.07142857142857142,
+      "B_mean_peak": 7.273773248724474
+    },
+    {
+      "key": "child_with_parent",
+      "title": "Child arrives with parent",
+      "label": "benign",
+      "n": 23,
+      "A_alert_rate": 0.0,
+      "B_alert_rate": 0.0,
+      "B_mean_peak": 2.347826086956522
+    },
+    {
+      "key": "child_alone_quiet",
+      "title": "Child home alone, nobody else",
+      "label": "benign",
+      "n": 32,
+      "A_alert_rate": 0.0625,
+      "B_alert_rate": 0.0625,
+      "B_mean_peak": 5.6875
+    },
+    {
+      "key": "phantom_detection",
+      "title": "Phantom camera detection",
+      "label": "benign",
+      "n": 25,
+      "A_alert_rate": 1.0,
+      "B_alert_rate": 0.0,
+      "B_mean_peak": 20.844298052322134
+    },
+    {
+      "key": "pet_motion",
+      "title": "Pet triggers PIR",
+      "label": "benign",
+      "n": 23,
+      "A_alert_rate": 0.0,
+      "B_alert_rate": 0.0,
+      "B_mean_peak": 18.26086956521739
+    },
+    {
+      "key": "stranger_bedroom",
+      "title": "Stranger in the bedroom",
+      "label": "threat",
+      "n": 20,
+      "A_alert_rate": 1.0,
+      "B_alert_rate": 1.0,
+      "B_mean_peak": 88.14591568843716
+    },
+    {
+      "key": "photo_spoof",
+      "title": "Photo / screen spoof",
+      "label": "threat",
+      "n": 18,
+      "A_alert_rate": 0.0,
+      "B_alert_rate": 0.8888888888888888,
+      "B_mean_peak": 48.05116060042763
+    },
+    {
+      "key": "tailgating",
+      "title": "Tailgating at the door",
+      "label": "threat",
+      "n": 21,
+      "A_alert_rate": 0.047619047619047616,
+      "B_alert_rate": 0.9047619047619048,
+      "B_mean_peak": 61.2383946542036
+    },
+    {
+      "key": "worker_after_hours",
+      "title": "Worker outside approved hours",
+      "label": "threat",
+      "n": 16,
+      "A_alert_rate": 0.0,
+      "B_alert_rate": 1.0,
+      "B_mean_peak": 100.0
+    },
+    {
+      "key": "worker_restricted",
+      "title": "Worker enters restricted room",
+      "label": "threat",
+      "n": 20,
+      "A_alert_rate": 0.05,
+      "B_alert_rate": 1.0,
+      "B_mean_peak": 48.489999999999995
+    },
+    {
+      "key": "child_alone_worker",
+      "title": "Worker arrives, child alone",
+      "label": "threat",
+      "n": 21,
+      "A_alert_rate": 0.14285714285714285,
+      "B_alert_rate": 0.9047619047619048,
+      "B_mean_peak": 37.78857142857142
+    },
+    {
+      "key": "child_alone_stranger",
+      "title": "Stranger, child home alone",
+      "label": "threat",
+      "n": 21,
+      "A_alert_rate": 0.9523809523809523,
+      "B_alert_rate": 0.9523809523809523,
+      "B_mean_peak": 68.00217706042059
+    },
+    {
+      "key": "blind_spot_entry",
+      "title": "Entry outside camera view",
+      "label": "threat",
+      "n": 27,
+      "A_alert_rate": 0.0,
+      "B_alert_rate": 0.8888888888888888,
+      "B_mean_peak": 40.0
+    },
+    {
+      "key": "night_visitor",
+      "title": "Unknown visitor at night",
+      "label": "threat",
+      "n": 17,
+      "A_alert_rate": 1.0,
+      "B_alert_rate": 0.8823529411764706,
+      "B_mean_peak": 51.11980161985213
+    }
+  ],
+  "cooldown": {
+    "naive_notifications": 1788,
+    "grouped_notifications": 257,
+    "reduction": 0.8562639821029083
+  },
+  "assumptions": [
+    "Synthetic scenarios with injected recognition noise (4% false-reject, 1% false-accept, 5% sensor dropout).",
+    "System A judges only the primary face: recognised -> safe, unrecognised -> alert.",
+    "An 'alert' for System B is any frame at MEDIUM risk or above (score >= 30).",
+    "Ground truth is defined by the scenario design/protocol; replace with real labelled trials for publication."
+  ]
+}

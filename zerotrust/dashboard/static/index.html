@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ZeroTrust Home · Guardian Dashboard</title>
+  <meta name="description" content="Guardian console for the AI-based zero-trust smart home security and child safety system: live risk score, trust breakdown, explainable alerts and one-tap override.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="bg-orb orb-a"></div><div class="bg-orb orb-b"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" class="logo" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5 13 12 15 7-2 12-7.5 12-15V7z" fill="none" stroke="currentColor" stroke-width="2"/><path d="m11 16 4 4 7-8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><h1>ZeroTrust Home</h1><p>Never trust, always verify</p></div>
+    </div>
+    <div class="top-right">
+      <span id="modePill" class="pill">—</span>
+      <span id="offlinePill" class="pill" title="Network status & offline alert buffer" style="font-size:0.72rem;">🌐 Online (0 queued)</span>
+      <span id="alarmPill" class="pill pill-alarm hidden">🔊 ALARM ACTIVE</span>
+      <button id="awayBtn" class="toggle" title="Mark all adults as away (activates Child-Alone Protocol if a child is home)">
+        <span class="dot"></span> Guardians away
+      </button>
+      <button id="silenceBtn" class="btn btn-ghost">Silence</button>
+      <span id="clock" class="clock">--:--</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- ================= LEFT ================= -->
+    <div class="col">
+      <section class="card" id="sceneCard">
+        <div class="card-head">
+          <div>
+            <h2>Live scene</h2>
+            <span id="scenarioName" class="muted small"></span>
+          </div>
+          <span id="lightingPill" class="pill small" style="font-size:0.68rem; padding:4px 8px;">🔆 Lighting: Normal</span>
+        </div>
+        <div id="videoWrap" class="video-wrap">
+          <div class="video-header" style="display:flex; justify-content:space-between; align-items:center; padding:7px 12px; background:rgba(0,0,0,0.65); font-size:0.75rem; color:#6ee7f9; border-bottom:1px solid rgba(255,255,255,0.08);">
+            <span>🔴 LIVE CAMERA FEED — <b id="camLabel">CAM-01 [ENTRY]</b></span>
+            <span style="font-size:0.68rem; color:#94a3b8;">Biometric Face HUD Active</span>
+          </div>
+          <img id="stream" src="/api/stream" alt="Live camera stream" style="width:100%; display:block; min-height:220px; background:#0b0f19;">
+        </div>
+        <div id="plan" class="plan" aria-label="Home floor plan" style="margin-top:14px;"></div>
+        <div class="sensors">
+          <button class="sensor" id="sDoor"><span class="led"></span><b>Door contact</b><em id="sDoorTxt">closed</em></button>
+          <button class="sensor" id="sPir"><span class="led"></span><b>PIR motion</b><em id="sPirTxt">idle</em></button>
+          <button class="sensor" id="sAudio" title="Acoustic sensor detects glass breaking or screams in blind spots"><span class="led"></span><b>Audio Mic</b><em id="sAudioTxt">listening</em></button>
+        </div>
+        <div class="cam-controls" style="display:flex; gap:10px; margin-top:10px;">
+          <button id="camSwitchBtn" class="sensor" style="flex:1.2;" title="Switch camera feed / RTSP angle (Limitation #1 Fix)">
+            <span class="led" style="background:#22d3ee; box-shadow:0 0 8px #22d3ee;"></span>
+            <b>Camera View</b><em id="camActiveTxt">Entrance Cam</em>
+          </button>
+          <button id="audioTriggerBtn" class="btn btn-ghost" style="flex:0.8; font-size:0.75rem; padding:8px 10px; white-space:nowrap;" title="Simulate acoustic distress in blind spot (Limitation #6 Fix)">
+            💥 Trigger Audio
+          </button>
+        </div>
+        <div class="card-head" style="margin-top:18px; margin-bottom:8px;">
+          <h3 style="font-size:0.9rem;">Detected Faces in Camera View</h3>
+          <span class="muted small" id="faceCountTxt">0 persons</span>
+        </div>
+        <div id="faceList" class="face-list" style="display:flex; flex-direction:column; gap:8px;">
+          <p class="muted small">No persons currently in camera field of view.</p>
+        </div>
+        <p class="muted small" id="planHint" style="margin-top:8px;">Click a room to set zone coverage, or use the camera switch button.</p>
+      </section>
+
+      <section class="card hidden" id="demoCard">
+        <div class="card-head"><h2>Scenario lab</h2><span class="muted small">simulated events through the real pipeline</span></div>
+        <h3 class="sub ok">Everyday situations</h3><div id="benignBtns" class="chips"></div>
+        <h3 class="sub bad">Threat situations</h3><div id="threatBtns" class="chips"></div>
+      </section>
+    </div>
+
+    <!-- ================= MIDDLE ================= -->
+    <div class="col">
+      <section class="card risk-card" id="riskCard" data-level="LOW">
+        <div class="card-head"><h2>Cumulative risk</h2><span id="levelBadge" class="badge">LOW</span></div>
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 220 130" class="gauge">
+            <path d="M20 112 A90 90 0 0 1 200 112" class="g-track"/>
+            <path id="gArc" d="M20 112 A90 90 0 0 1 200 112" class="g-arc" stroke-dasharray="0 283"/>
+            <g class="g-ticks"><text x="14" y="128">0</text><text x="98" y="18">50</text><text x="196" y="128">100</text></g>
+          </svg>
+          <div class="g-readout"><span id="score">0</span><small>/ 100</small></div>
+        </div>
+        <p id="summary" class="summary">Waiting for activity…</p>
+        <p id="action" class="muted small"></p>
+        <svg id="spark" class="spark" viewBox="0 0 300 70" preserveAspectRatio="none"></svg>
+      </section>
+
+      <section class="card" id="trustCard">
+        <div class="card-head"><h2>Live trust score</h2><span class="muted small">recomputed every frame</span></div>
+        <div class="trust-grid">
+          <div class="ring-wrap">
+            <svg viewBox="0 0 120 120" class="ring"><circle cx="60" cy="60" r="52" class="r-track"/><circle id="rArc" cx="60" cy="60" r="52" class="r-arc" stroke-dasharray="0 327"/></svg>
+            <div class="r-readout"><span id="trustVal">100</span><small>trust</small></div>
+          </div>
+          <div id="trustBars" class="bars"></div>
+        </div>
+      </section>
+
+      <section class="card" id="whyCard">
+        <div class="card-head"><h2>Why this score</h2><span class="muted small">every point is attributed</span></div>
+        <ul id="signals" class="signals"><li class="empty">No risk signals — routine activity.</li></ul>
+      </section>
+    </div>
+
+    <!-- ================= RIGHT ================= -->
+    <div class="col">
+      <section class="card guardian" id="guardianCard">
+        <div class="card-head"><h2>Guardian override</h2><span id="incBadge" class="muted small"></span></div>
+        <div id="guardianBody"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>Notifications</h2><span class="muted small">on-site + remote</span></div>
+        <ul id="outbox" class="outbox"><li class="empty">No messages sent yet.</li></ul>
+        <div class="stat-row">
+          <div><b id="stAlerts">0</b><span>alerts sent</span></div>
+          <div><b id="stSupp">0</b><span>grouped</span></div>
+          <div><b id="stEvents">0</b><span>evidence</span></div>
+          <div><b id="stOffline" style="color:var(--accent);">0</b><span>offline buffered</span></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>Evidence log</h2><span class="muted small">snapshot · video · record</span></div>
+        <ul id="events" class="events"><li class="empty">No events recorded.</li></ul>
+      </section>
+    </div>
+  </main>
+
+  <section class="card research" id="research">
+    <div class="card-head">
+      <div><h2>Research evaluation — does context beat identity alone?</h2>
+      <p class="muted small" id="resMeta">System A (face recognition only) vs System B (context-aware fusion)</p></div>
+      <button id="runEval" class="btn">Run evaluation</button>
+    </div>
+    <div id="resBody" class="res-body"><p class="muted">No results loaded. Press “Run evaluation” (≈3 s) to simulate 400 scenarios.</p></div>
+  </section>
+
+  <div id="modal" class="modal hidden"><div class="modal-box"><button id="modalClose" class="btn btn-ghost close">✕</button><div id="modalBody"></div></div></div>
+  <div id="toast" class="toast hidden"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
